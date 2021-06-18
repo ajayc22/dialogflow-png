@@ -35,6 +35,8 @@ public class MyActionsApp extends DialogflowApp {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MyActionsApp.class);
 
+  private static final String VALID_T_NUMBERS = "A123456,B123456,C123456,D123456,A234567,B234567,C234567,D234567,A132436,B132435,C132435,D132435";
+  
   @ForIntent("Default Welcome Intent")
   public ActionResponse welcome(ActionRequest request) {
     LOGGER.info("Welcome intent start.");
@@ -67,10 +69,20 @@ public class MyActionsApp extends DialogflowApp {
   public ActionResponse fetchAuthId(ActionRequest request) {
 	    LOGGER.info("Fetch Authentication ID intent start.");
 	    ResponseBuilder responseBuilder = getResponseBuilder(request);
-//	    ResourceBundle rb = ResourceBundle.getBundle("resources");
-	    String authId = (String) request.getParameter("authid");
-	    
-	    responseBuilder.add("Said T-Number is "+authId+" and You are authenticated successfully").endConversation();
+	    ResourceBundle rb = ResourceBundle.getBundle("resources");
+	    String userAuthId = (String) request.getParameter("authid");
+	    boolean found = false;
+	    for(String authId : VALID_T_NUMBERS.split(",")) {
+	    	if(authId.equalsIgnoreCase(userAuthId)) {
+	    		found = true;
+	    		break;
+	    	}
+	    }
+	    if(found) {
+	    	responseBuilder.add(rb.getString("fetch_auth_id_success").replace("$authid", userAuthId)).endConversation();
+	    }else {
+	    	responseBuilder.add(rb.getString("fetch_auth_id_failure").replace("$authid", userAuthId)).endConversation();
+	    }
 	    LOGGER.info("Fetch Authentication ID intent end.");
 	    return responseBuilder.build();
 	  }
