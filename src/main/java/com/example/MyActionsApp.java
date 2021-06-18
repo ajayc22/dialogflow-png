@@ -63,4 +63,15 @@ public class MyActionsApp extends DialogflowApp {
     return responseBuilder.build();
   }
   
+  @ForIntent("fetch_auth_id")
+  public ActionResponse fetchAuthId(ActionRequest request) {
+	    LOGGER.info("Fetch Authentication ID intent start.");
+	    ResponseBuilder responseBuilder = getResponseBuilder(request);
+//	    ResourceBundle rb = ResourceBundle.getBundle("resources");
+	    String authId = (String) request.getParameter("authid");
+	    
+	    responseBuilder.add("Said T-Number is "+authId+" and You are authenticated successfully").endConversation();
+	    LOGGER.info("Fetch Authentication ID intent end.");
+	    return responseBuilder.build();
+	  }
 }
